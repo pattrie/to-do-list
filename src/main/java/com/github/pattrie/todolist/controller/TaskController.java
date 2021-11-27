@@ -1,12 +1,15 @@
 package com.github.pattrie.todolist.controller;
 
-import com.github.pattrie.todolist.model.Task;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import com.github.pattrie.todolist.model.json.TaskRequestJson;
+import com.github.pattrie.todolist.model.json.TaskResponseJson;
 import com.github.pattrie.todolist.service.TaskService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,22 +25,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class TaskController {
 
-  private TaskService taskService;
+  private final TaskService taskService;
 
   @ApiOperation(value = "Creating a new task")
   @ApiResponses(value = {
       @ApiResponse(code = 201, message = "Successfully created task"),
       @ApiResponse(code = 500, message = "There was an error creating the task, check the information")
   })
-  @PostMapping
+  @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  public Task createTask(@RequestBody Task task) {
-    log.info("Creating a new task with the information:: {}", task);
-    return taskService.createTask(task);
+  public TaskResponseJson createTask(@RequestBody TaskRequestJson taskRequestJson) {
+    log.info("Creating a new task with the information:: {}", taskRequestJson);
+    return taskService.createTask(taskRequestJson);
   }
 
   @ApiOperation(value = "Listing all tasks")
@@ -45,9 +48,9 @@ public class TaskController {
       @ApiResponse(code = 200, message = "Successfully listed tasks"),
       @ApiResponse(code = 500, message = "There was an error listing the tasks, check the information")
   })
-  @GetMapping
+  @GetMapping(produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
-  public List<Task> getAllTasks() {
+  public List<TaskResponseJson> getAllTasks() {
     log.info("Listing all tasks.");
     return taskService.listAllTasks();
   }
@@ -57,9 +60,9 @@ public class TaskController {
       @ApiResponse(code = 200, message = "Successfully found task"),
       @ApiResponse(code = 404, message = "Task not found with this id")
   })
-  @GetMapping("/{id}")
+  @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Task> getById(@PathVariable Long id) {
+  public ResponseEntity<TaskResponseJson> getById(@PathVariable Long id) {
     log.info("Searching task by ID:: {}", id);
     return taskService.findById(id);
   }
@@ -69,11 +72,12 @@ public class TaskController {
       @ApiResponse(code = 200, message = "Successfully updated task"),
       @ApiResponse(code = 404, message = "Task not found with this id")
   })
-  @PutMapping("/{id}")
+  @PutMapping(path = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Task> updateById(@PathVariable Long id, @RequestBody Task task) {
-    log.info("Updating task with ID:: {} - New information:: {}", id, task);
-    return taskService.updateById(task, id);
+  public ResponseEntity<TaskResponseJson> updateById(@PathVariable Long id,
+      @RequestBody TaskRequestJson taskRequestJson) {
+    log.info("Updating task with ID:: {} - New information:: {}", id, taskRequestJson);
+    return taskService.updateById(taskRequestJson, id);
   }
 
   @ApiOperation(value = "Deleting task")
@@ -81,7 +85,7 @@ public class TaskController {
       @ApiResponse(code = 204, message = "Successfully deleted task"),
       @ApiResponse(code = 404, message = "Task not found with this id")
   })
-  @DeleteMapping("/{id}")
+  @DeleteMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Object> deleteById(@PathVariable Long id) {
     log.info("Deleting task with ID:: {}", id);
