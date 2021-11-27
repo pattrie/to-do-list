@@ -1,8 +1,10 @@
-<h1 align="center">🚀 Estudos em grupo: Desenvolvimento de uma API em Java e Spring baseado nas funcionalidades de uma To-Do List 🚀</h1>
+<h1 align="center">🚀 To-Do List 🚀</h1>
+
+
+<h4 align="center"> Estudos em grupo: Desenvolvimento de uma API em Java e Spring baseado nas funcionalidades de uma lista de tarefas.</h2>
 
 
 ### Aprendendo com os vídeos da [Kamila Santos](https://youtu.be/un7EgWqgNMs)
-
 
 <div id="feature">
     <h3> Feature :computer: </h3>
